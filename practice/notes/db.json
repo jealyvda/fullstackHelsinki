@@ -4,13 +4,13 @@
       "id": 1,
       "content": "HTML is easy",
       "date": "2022-1-17T17:30:31.098Z",
-      "important": true
+      "important": false
     },
     {
       "id": 2,
       "content": "Browser can execute only JavaScript",
       "date": "2022-1-17T18:39:34.091Z",
-      "important": true
+      "important": false
     },
     {
       "id": 3,
@@ -21,8 +21,20 @@
     {
       "content": "newpost",
       "date": "2022-11-16T20:35:24.193Z",
-      "important": false,
+      "important": true,
       "id": 4
+    },
+    {
+      "content": "jealy hallo",
+      "date": "2022-11-17T19:57:17.655Z",
+      "important": true,
+      "id": 5
+    },
+    {
+      "content": "Byee",
+      "date": "2022-11-17T19:57:22.130Z",
+      "important": true,
+      "id": 6
     }
   ]
 }
