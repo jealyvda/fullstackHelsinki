@@ -4,12 +4,15 @@ import PersonForm from './components/PersonForm'
 import Filter from './components/Filter'
 import Numbers from './components/Numbers'
 import numberService from './services/numbers'
+import Notification from './components/Notification'
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
+  const [message, setMessage] = useState(null)
+  const [error, setError] = useState(null)
 
 
   useEffect(() => {
@@ -58,7 +61,7 @@ const App = () => {
       const personObj = {
         name: newName,
         number: newNumber,
-        id: persons.length + 1
+        id: Math.max(persons.id) + 1
       }
 
       numberService
@@ -67,6 +70,12 @@ const App = () => {
           setPersons(persons.concat(returnedObj))
           setNewName('')
           setNewNumber('')
+          setMessage(
+            `${returnedObj.name} was succesfully added.`
+          )
+          setTimeout(() => {
+            setMessage(null)
+          }, 5000)
         })
     }
   }
@@ -85,7 +94,22 @@ const App = () => {
           setPersons(persons.map(p => (p.id !== returnedObj.id) ? p : returnedObj))
           setNewName('')
           setNewNumber('')
+          setMessage(
+            `Phone number from ${returnedObj.name} was succesfully updated.`
+          )
+          setTimeout(() => {
+            setMessage(null)
+          }, 5000)
         })
+      .catch(error => {
+        setError(
+          `Information of ${personObj.name} has already been removed from server.`
+        )
+        setTimeout(() => {
+          setError(null)
+        }, 5000)
+        setPersons(persons.filter(p => p.id !== personObj.id))
+      })
     }
   }
 
@@ -93,6 +117,8 @@ const App = () => {
   return (
     <div>
       <h2>Numberbook</h2>
+      <Notification message={message} className={'message'}/>
+      <Notification message={error} className={'error'} />
       <Filter
         newFilter={newFilter}
         handleFilterChange={handleFilterChange}
