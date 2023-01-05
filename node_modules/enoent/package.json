@@ -1,0 +1,24 @@
+{
+  "name": "enoent",
+  "version": "1.0.0",
+  "description": "A simple package which replaces fs.exists",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/greencoder001/enoent.git"
+  },
+  "keywords": [
+    "fs",
+    "exists",
+    "enoent"
+  ],
+  "author": "Green_Lab",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/greencoder001/enoent/issues"
+  },
+  "homepage": "https://github.com/greencoder001/enoent#readme"
+}

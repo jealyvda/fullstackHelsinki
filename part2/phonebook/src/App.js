@@ -61,7 +61,6 @@ const App = () => {
       const personObj = {
         name: newName,
         number: newNumber,
-        id: Math.max(persons.id) + 1
       }
 
       numberService
@@ -77,11 +76,16 @@ const App = () => {
             setMessage(null)
           }, 5000)
         })
+        .catch(error => {
+          setError(`Error, ${error.response.data.error}`)
+          setTimeout(() => {
+            setError(null)
+          }, 5000)
+        })
     }
   }
 
   const updateNumber = (person) => {
-    console.log(person)
     if (window.confirm(`${person.name} is already added to the phonebook, replace the old number with a new one?`)) {
       const personObj = {
         ...person,
@@ -102,9 +106,7 @@ const App = () => {
           }, 5000)
         })
       .catch(error => {
-        setError(
-          `Information of ${personObj.name} has already been removed from server.`
-        )
+        setError(`Error, ${error.response.data.error}`)
         setTimeout(() => {
           setError(null)
         }, 5000)
