@@ -5,10 +5,6 @@ if (process.argv.length < 3) {
   process.exit(1)
 }
 
-const password = process.argv[2]
-
-const url = `mongodb+srv://jealyvda:${password}@cluster0.qzvrmth.mongodb.net/noteApp?retryWrites=true&w=majority`
-
 const noteSchema = new mongoose.Schema({
   content: String,
   date: Date,
