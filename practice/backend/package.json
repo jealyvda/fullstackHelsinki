@@ -10,7 +10,9 @@
     "build:ui": "rm -rf build && cd ../notes/ && npm run build && cp -r build ../backend",
     "deploy": "flyctl deploy",
     "deploy:full": "npm run build:ui && npm run deploy",
-    "logs:prod": "flyctl logs"
+    "logs:prod": "flyctl logs",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix --ext .js,.jsx ."
   },
   "author": "Jealy van den Aker",
   "license": "ISC",
