@@ -6,13 +6,13 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build:ui": "rm -rf build && cd ../notes/ && npm run build && cp -r build ../backend",
     "deploy": "flyctl deploy",
     "deploy:full": "npm run build:ui && npm run deploy",
     "logs:prod": "flyctl logs",
     "lint": "eslint .",
-    "lint:fix": "eslint --fix --ext .js,.jsx ."
+    "lint:fix": "eslint --fix --ext .js,.jsx .",
+    "test": "jest --verbose"
   },
   "author": "Jealy van den Aker",
   "license": "ISC",
@@ -23,6 +23,10 @@
     "mongoose": "^6.7.3"
   },
   "devDependencies": {
+    "jest": "^29.3.1",
     "nodemon": "^2.0.20"
+  },
+  "jest": {
+    "testEnvironment": "node"
   }
 }
