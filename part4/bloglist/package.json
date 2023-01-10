@@ -18,7 +18,7 @@
     "start": "react-scripts start",
     "dev": "nodemon index.js",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "jest --verbose",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -40,6 +40,10 @@
     ]
   },
   "devDependencies": {
+    "jest": "^27.5.1",
     "nodemon": "^2.0.20"
+  },
+  "jest": {
+    "testEnvironment": "node"
   }
 }
