@@ -54,7 +54,7 @@ test('a valid note can be added', async () => {
 
     const notesAtEnd = await helper.notesInDb()
     expect(notesAtEnd).toHaveLength(helper.initialNotes.length + 1)
-    
+
     const contents = notesAtEnd.map(r => r.content)
     expect(contents).toContain(
         'async/await simplifies making async calls'
@@ -63,22 +63,20 @@ test('a valid note can be added', async () => {
 
 test('note without content is not added', async () => {
     const newNote = {
-      important: true
+        important: true
     }
-  
+
     await api
-      .post('/api/notes')
-      .send(newNote)
-      .expect(400)
-  
+        .post('/api/notes')
+        .send(newNote)
+        .expect(400)
+
     const notesAtEnd = await helper.notesInDb()
-  
+
     expect(notesAtEnd).toHaveLength(helper.initialNotes.length)
 }, 10000)
 
-afterAll(() => {
-    mongoose.connection.close()
-})
+
 
 test('a specific note can be viewed', async () => {
     const notesAtStart = await helper.notesInDb()
@@ -110,4 +108,8 @@ test('a note can be deleted', async () => {
     const contents = notesAtEnd.map(r => r.content)
 
     expect(contents).not.toContain(noteToDelete.content)
+})
+
+afterAll(() => {
+    mongoose.connection.close()
 })
