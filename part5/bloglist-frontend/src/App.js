@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
+  const [newBlog, setNewBlog] = useState('')
   const [errorMessage, setErrorMessage] = useState(null)
+  const [succesMessage, setSuccesMessage] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
@@ -41,6 +44,10 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
+      setSuccesMessage(`${user.name} is succesfully logged in!`)
+      setTimeout(() => {
+        setSuccesMessage(null)
+      }, 5000)
     } catch (exception) {
       setErrorMessage('Wrong credentials')
       setTimeout(() => {
@@ -52,6 +59,11 @@ const App = () => {
   const handleLogout = (event) => {
     event.preventDefault()
     blogService.setToken(null)
+    setSuccesMessage(`${user.name} is succesfully logged out.`)
+    setTimeout(() => {
+      setSuccesMessage(null)
+    }, 5000)
+
     setUser(null)
 
     window.localStorage.clear()
@@ -84,6 +96,23 @@ const App = () => {
     </div>
   )
 
+  const createBlog = async (blog) => {
+    try {
+      const createdBlog = await blogService.create(blog)
+      setBlogs(blogs.concat(createdBlog))
+      setSuccesMessage(`${createdBlog.title} by ${createdBlog.author} is succesfully added`)
+      setTimeout(() => {
+        setSuccesMessage(null)
+      }, 5000);
+  } catch(exception) {
+    setErrorMessage(
+      'Can not add blog'
+    )
+    setTimeout(() => {
+      setErrorMessage(null)
+    }, 5000)
+  }}
+
   const blogOverview = () => (
     <div>
       <h1>
@@ -95,6 +124,7 @@ const App = () => {
           <button type="submit">logout</button>
         </form>
       </p>
+      <BlogForm createBlog={createBlog} />
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
@@ -103,7 +133,8 @@ const App = () => {
 
   return (
     <div>
-      <Notification message={errorMessage} />
+      <Notification message={errorMessage} type={'error'} />
+      <Notification message={succesMessage} type={'succes'} />
       {user === null ?
         loginForm() :
         blogOverview()
