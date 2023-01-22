@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
+import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -13,6 +14,7 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+  const [createBlogVisible, setCreateBlogVisible] = useState(false)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -41,6 +43,7 @@ const App = () => {
         'loggedBlogappUser', JSON.stringify(user)
       )
       blogService.setToken(user.token)
+      console.log(user)
       setUser(user)
       setUsername('')
       setPassword('')
@@ -99,6 +102,7 @@ const App = () => {
   const createBlog = async (blog) => {
     try {
       const createdBlog = await blogService.create(blog)
+      blogFormRef.current.toggleVisibility()
       setBlogs(blogs.concat(createdBlog))
       setSuccesMessage(`${createdBlog.title} by ${createdBlog.author} is succesfully added`)
       setTimeout(() => {
@@ -113,6 +117,38 @@ const App = () => {
     }, 5000)
   }}
 
+  const updateLikes = async (id) => {
+
+    const blog = blogs.find(n => n.id === id)
+    const changedBlog = { ...blog, likes: blog.likes + 1}
+    try {
+      const updatedBlog = await blogService.update(id, changedBlog)
+      setBlogs(blogs.map(n => n.id !== id ? n : updatedBlog))
+      setSuccesMessage(`${updatedBlog.title} has been succesfully liked!`)
+      setTimeout(() => {setSuccesMessage(null)}, 5000)
+    } catch(exception) {
+      setErrorMessage('Can not like this blog')
+      setTimeout(() => {setErrorMessage(null)}, 5000)
+    }
+  }
+
+  const removeBlog = async (id) => {
+    const blog = blogs.find(n => n.id === id)
+    if (window.confirm(`Do you really want to delete ${blog.title} by ${blog.author}?`)) {
+      try {
+        await blogService.remove(id)
+        setBlogs(blogs.filter(n => n.id !== id))
+        setSuccesMessage(`${blog.title} by ${blog.author} has been succesfully deleted`)
+        setTimeout(() => {setSuccesMessage(null)}, 5000)
+      } catch(exception) {
+        setErrorMessage('Can not delete this blog')
+        setTimeout(() => {setErrorMessage(null)}, 5000)
+      }
+    }
+  }
+
+  const blogFormRef = useRef()
+
   const blogOverview = () => (
     <div>
       <h1>
@@ -120,17 +156,26 @@ const App = () => {
       </h1>
       <p>
         {user.name} logged in
+      </p>
         <form onSubmit={handleLogout}>
           <button type="submit">logout</button>
         </form>
-      </p>
-      <BlogForm createBlog={createBlog} />
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+      <Togglable buttonLabel="new blog" ref={blogFormRef}>
+        <BlogForm createBlog={createBlog} />
+      </Togglable>
+      {blogs
+        .sort((a,b) => b.likes - a.likes)
+        .map(blog =>
+          <Blog
+            key={blog.id}
+            blog={blog}
+            updateLikes={() => updateLikes(blog.id)}
+            removeBlog={() => removeBlog(blog.id)}
+            user={user}
+          />
       )}
     </div>
   )
-
   return (
     <div>
       <Notification message={errorMessage} type={'error'} />

@@ -1,8 +1,11 @@
-import { useEffect, useState } from 'react' 
+import { useEffect, useState, useRef } from 'react' 
 import Note from './components/Note'
 import noteService from './services/notes'
 import Notification from './components/Notification'
 import loginService from './services/login'
+import LoginForm from './components/LoginForm'
+import Togglable from './components/Togglable'
+import NoteForm from './components/NoteForm'
 
 const Footer = () => {
   const footerStyle = {
@@ -18,13 +21,12 @@ const Footer = () => {
   )
 }
 
+
 const App = () => {
   const [notes, setNotes] = useState([]) 
-  const [newNote, setNewNote] = useState('')
   const [showAll, setShowAll] = useState(true)
   const [errorMessage, setErrorMessage] = useState(null)
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
+  const [loginVisible, setLoginVisible] = useState(false)
   const [user, setUser] = useState(null)
 
   useEffect(() => {
@@ -44,29 +46,7 @@ const App = () => {
     }
   }, [])
 
-  const handleNoteChange = (event) => {
-    setNewNote(event.target.value)
-  }
-
-  const addNote = (event) => {
-    event.preventDefault()
-    const noteObject = {
-      content: newNote,
-      date: new Date(),
-      important: Math.random() < 0.5,
-    }
-
-    noteService
-      .create(noteObject)
-      .then(returnedNote => {
-        setNotes(notes.concat(returnedNote))
-        setNewNote('')
-      })
-  }
-
-  const handleLogin = async (event) => {
-    event.preventDefault()
-    
+  const handleLogin = async ({ username, password }) => {
     try {
       const user = await loginService.login({
         username, password
@@ -77,15 +57,21 @@ const App = () => {
       )
       noteService.setToken(user.token)
       setUser(user)
-      setUsername('')
-      setPassword('')
+
     } catch (exception) {
       setErrorMessage('Wrong credentials')
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
     }
-    }
+  }
+
+  const handleLogout = (event) => {
+    event.preventDefault()
+    noteService.setToken(null)
+    setUser(null)
+    window.localStorage.clear()
+  }
 
   const toggleImportanceOf = id => {
     const note = notes.find(n => n.id === id)
@@ -108,54 +94,45 @@ const App = () => {
       })
   }
 
+  const noteFormRef = useRef()
+
+  const noteForm = () => (
+    <Togglable buttonLabel="new note" ref={noteFormRef}>
+      <NoteForm createNote={addNote} />
+    </Togglable>
+  )
+
+  const addNote = (noteObject) => {
+    noteFormRef.current.toggleVisibility()
+    noteService
+    .create(noteObject)
+    .then(returnedNote => {
+      setNotes(notes.concat(returnedNote))
+    })
+  }
+
   const notesToShow = showAll
     ? notes
     : notes.filter(note => note.important === true)
-
-
-  const loginForm = () => (
-    <form onSubmit={handleLogin}>
-        <div>
-          username
-          <input
-            type="text"
-            value={username}
-            name="Username"
-            onChange={({ target }) => setUsername(target.value)}
-          />
-        </div>
-        <div>
-          password
-          <input
-            type="password"
-            value={password}
-            name="Password"
-            onChange={({ target }) => setPassword(target.value)}
-          />
-        </div>
-        <button type="submit">login</button>
-      </form>
-  )
-
-  const noteForm = () => (
-    <form onSubmit={addNote}>
-        <input
-          value={newNote}
-          onChange={handleNoteChange}
-        />
-        <button type="submit">save</button>
-      </form>  
-  )
 
   return (
     <div>
       <h1>Notes</h1>
       <Notification message={errorMessage} />
       
-      {user === null ?
-        loginForm() : 
+      {user === null ? 
+        <Togglable buttonLabel='login'>
+          <LoginForm
+            handleSubmit={handleLogin}
+          />
+        </Togglable> : 
         <div>
           <p>{user.name} logged-in</p>
+          <form onSubmit={handleLogout}>
+            <button type="submit">
+              logout
+            </button>
+          </form>
           {noteForm()}
         </div>
       }
