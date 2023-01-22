@@ -17,12 +17,14 @@ blogRouter.get('/:id', async (request, response) => {
 
 blogRouter.put('/:id', async (request, response) => {
   const body = request.body
+  const user = request.user
 
   const blog = {
     title: body.title,
     author: body.author,
     url: body.url,
     likes: body.likes || 0,
+    user: user._id
   }
 
    const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
