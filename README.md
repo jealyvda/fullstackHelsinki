@@ -5,8 +5,8 @@ All course materials and learning objectives can be found here: https://fullstac
 
 The total course consists of 14 chapters and is accredited with 14 ECTS
 
-## Chapters 0-3: Phonebook
-The first three chapters focus on developping a Phonebook app. The concepts discussed in these chapters include:
+## Chapters 0-3: Countries, Course and Phonebook
+The first three chapters focus on developping three apps: Countries, Course and Phonebook app. The concepts discussed in these chapters include:
 * React
 * JavaScript
 * Component state, event handlers
@@ -14,7 +14,7 @@ The first three chapters focus on developping a Phonebook app. The concepts disc
 * Connecting to servers
 * Database management (MongoDB)
 
-The webapp is deployed through fly.io and can be found here: https://github.com/jealyvda/fullstackHelsinki/edit/main/README.md 
+The final chapters (connecting to servers, databases and deploying to the internet) was only applied to the Phonebook webapp. Which is deployed through fly.io and can be found here: https://github.com/jealyvda/fullstackHelsinki/edit/main/README.md 
 
 ## Chapters 4-13: Bloglist
 All chapters going forward focus on developping a Bloglist app. The current webapp is not yet deployed to the internet, but the source code can be found in the respective folders. Note that the newer folders are copies of the older folders with new functionalities. This is necessary for the grading scheme by the University of Helsinki.
