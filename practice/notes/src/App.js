@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react' 
+import { useEffect, useState, useRef } from 'react'
 import Note from './components/Note'
 import noteService from './services/notes'
 import Notification from './components/Notification'
@@ -23,10 +23,9 @@ const Footer = () => {
 
 
 const App = () => {
-  const [notes, setNotes] = useState([]) 
+  const [notes, setNotes] = useState([])
   const [showAll, setShowAll] = useState(true)
   const [errorMessage, setErrorMessage] = useState(null)
-  const [loginVisible, setLoginVisible] = useState(false)
   const [user, setUser] = useState(null)
 
   useEffect(() => {
@@ -77,7 +76,7 @@ const App = () => {
     const note = notes.find(n => n.id === id)
     console.log(note, note.id, id)
     const changedNote = { ...note, important: !note.important }
-  
+
     noteService
       .update(id, changedNote)
       .then(returnedNote => {
@@ -105,10 +104,10 @@ const App = () => {
   const addNote = (noteObject) => {
     noteFormRef.current.toggleVisibility()
     noteService
-    .create(noteObject)
-    .then(returnedNote => {
-      setNotes(notes.concat(returnedNote))
-    })
+      .create(noteObject)
+      .then(returnedNote => {
+        setNotes(notes.concat(returnedNote))
+      })
   }
 
   const notesToShow = showAll
@@ -119,13 +118,13 @@ const App = () => {
     <div>
       <h1>Notes</h1>
       <Notification message={errorMessage} />
-      
-      {user === null ? 
+
+      {user === null ?
         <Togglable buttonLabel='login'>
           <LoginForm
             handleSubmit={handleLogin}
           />
-        </Togglable> : 
+        </Togglable> :
         <div>
           <p>{user.name} logged-in</p>
           <form onSubmit={handleLogout}>
