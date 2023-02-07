@@ -1,12 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import PropTypes from 'prop-types'
 
 const BlogForm = ({ createBlog }) => {
   const [author, setAuthor] = useState('')
   const [title, setTitle] = useState('')
   const [url, setUrl] = useState('')
-  const [likes, setLikes] = useState(null)
-  
+
   const handleTitleChange = (event) => {
     setTitle(event.target.value)
   }
@@ -39,7 +38,7 @@ const BlogForm = ({ createBlog }) => {
       <form onSubmit={addBlog}>
         <div>
           title
-          <input 
+          <input
             type="text"
             value={title}
             name="Title"
@@ -48,7 +47,7 @@ const BlogForm = ({ createBlog }) => {
         </div>
         <div>
           author
-          <input 
+          <input
             type="text"
             value={author}
             name="Author"
@@ -57,7 +56,7 @@ const BlogForm = ({ createBlog }) => {
         </div>
         <div>
           URL
-          <input 
+          <input
             type="text"
             value={url}
             name="URL"
