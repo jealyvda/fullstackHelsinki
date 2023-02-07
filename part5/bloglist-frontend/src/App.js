@@ -8,18 +8,16 @@ import loginService from './services/login'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [newBlog, setNewBlog] = useState('')
   const [errorMessage, setErrorMessage] = useState(null)
   const [succesMessage, setSuccesMessage] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [createBlogVisible, setCreateBlogVisible] = useState(false)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
-    )  
+    )
   }, [])
 
   useEffect(() => {
@@ -33,7 +31,7 @@ const App = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault()
-    
+
     try {
       const user = await loginService.login({
         username, password
@@ -107,20 +105,20 @@ const App = () => {
       setSuccesMessage(`${createdBlog.title} by ${createdBlog.author} is succesfully added`)
       setTimeout(() => {
         setSuccesMessage(null)
-      }, 5000);
-  } catch(exception) {
-    setErrorMessage(
-      'Can not add blog'
-    )
-    setTimeout(() => {
-      setErrorMessage(null)
-    }, 5000)
-  }}
+      }, 5000)
+    } catch(exception) {
+      setErrorMessage(
+        'Can not add blog'
+      )
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+    }}
 
   const updateLikes = async (id) => {
 
     const blog = blogs.find(n => n.id === id)
-    const changedBlog = { ...blog, likes: blog.likes + 1}
+    const changedBlog = { ...blog, likes: blog.likes + 1 }
     try {
       const updatedBlog = await blogService.update(id, changedBlog)
       setBlogs(blogs.map(n => n.id !== id ? n : updatedBlog))
@@ -157,9 +155,9 @@ const App = () => {
       <p>
         {user.name} logged in
       </p>
-        <form onSubmit={handleLogout}>
-          <button type="submit">logout</button>
-        </form>
+      <form onSubmit={handleLogout}>
+        <button type="submit">logout</button>
+      </form>
       <Togglable buttonLabel="new blog" ref={blogFormRef}>
         <BlogForm createBlog={createBlog} />
       </Togglable>
@@ -173,7 +171,7 @@ const App = () => {
             removeBlog={() => removeBlog(blog.id)}
             user={user}
           />
-      )}
+        )}
     </div>
   )
   return (

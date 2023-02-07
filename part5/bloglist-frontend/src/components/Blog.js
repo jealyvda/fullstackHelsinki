@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import PropTypes from 'prop-types'
 
 const Blog = ({ blog, updateLikes, removeBlog, user }) => {
   const [visible, setVisible] = useState(false)
@@ -30,7 +31,12 @@ const Blog = ({ blog, updateLikes, removeBlog, user }) => {
         {blog.author} <br />
         {blog.user.username === user.username ? <button onClick={removeBlog}>delete</button> : null}
       </div>
-    </div>  
-)}
+    </div>
+  )}
+
+Blog.propTypes = {
+  updateLikes: PropTypes.func.isRequired,
+  removeBlog: PropTypes.func.isRequired
+}
 
 export default Blog
