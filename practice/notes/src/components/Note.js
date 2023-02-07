@@ -4,9 +4,9 @@ const Note = ({ note, toggleImportance }) => {
 
   return (
     <li className='note'>
-      {note.content} 
+      {note.content}
       <button onClick={toggleImportance}>{label}</button>
     </li>
   )
 }
-  export default Note
+export default Note

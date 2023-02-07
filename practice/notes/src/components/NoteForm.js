@@ -22,13 +22,13 @@ const NoteForm = ({ createNote }) => {
     <div>
       <h2>Create a new note</h2>
       <form onSubmit={addNote}>
-          <input
-            value={newNote}
-            onChange={handleChange}
-          />
-          <button type="submit">save</button>
-        </form>  
+        <input
+          value={newNote}
+          onChange={handleChange}
+        />
+        <button type="submit">save</button>
+      </form>
     </div>
-)}
+  )}
 
 export default NoteForm
