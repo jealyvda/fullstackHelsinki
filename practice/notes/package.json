@@ -17,7 +17,9 @@
     "eject": "react-scripts eject",
     "server": "json-server -p3001 --watch db.json",
     "lint": "eslint .",
-    "lint:fix": "eslint --fix --ext .js,.jsx ."
+    "lint:fix": "eslint --fix --ext .js,.jsx .",
+    "cypress:open": "cypress open",
+    "test:e2e": "cypress run"
   },
   "proxy": "http://localhost:3001",
   "eslintConfig": {
@@ -42,6 +44,8 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^14.4.3",
+    "cypress": "^12.6.0",
+    "eslint-plugin-cypress": "^2.12.1",
     "eslint-plugin-jest": "^27.2.1",
     "json-server": "^0.17.1"
   }
