@@ -23,6 +23,7 @@ describe('<Blog />', () => {
 
   const mockHandlerUpdate = jest.fn()
   const mockHandlerRemove = jest.fn()
+
   beforeEach(() => {
     container = render(
       <Blog
@@ -38,7 +39,7 @@ describe('<Blog />', () => {
   test('Always displays author and title', () => {
     const input = screen.getAllByText('Jvda', { exact: false })
     const element = screen.getAllByText('Test!', { exact: false })
-  
+
     expect(input).toBeDefined()
     expect(element).toBeDefined()
   })
@@ -55,5 +56,14 @@ describe('<Blog />', () => {
 
     const div = container.querySelector('.blogContent')
     expect(div).not.toHaveStyle('display:none')
+  })
+
+  test('after clicking like button twice, event handler is called twice', async () => {
+    const user = userEvent.setup()
+    const button = screen.getByText('like')
+    await user.click(button)
+    await user.click(button)
+
+    expect(mockHandlerUpdate.mock.calls).toHaveLength(2)
   })
 })
