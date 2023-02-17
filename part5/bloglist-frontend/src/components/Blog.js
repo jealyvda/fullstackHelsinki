@@ -21,15 +21,15 @@ const Blog = ({ blog, updateLikes, removeBlog, user }) => {
   return(
     <div style={blogStyle}>
       <div style={hideWhenVisible} >
-        {blog.title} <br />
-        {blog.author}
+        Title: {blog.title} <br />
+        Author: {blog.author}
         <button onClick={toggleVisibility} id="view">view</button>
       </div>
       <div style={showWhenVisible} className="blogContent">
-        {blog.title} <button onClick={toggleVisibility}>hide</button><br />
-        {blog.author} <br />
-        {blog.url} <br />
-        {blog.likes} <button onClick={updateLikes}>like</button><br />
+        Title: {blog.title}  <button onClick={toggleVisibility}>hide</button><br />
+        Author:{blog.author}  <br />
+        URL: {blog.url} <br />
+        Likes: {blog.likes} <button id="like-button" onClick={updateLikes}>like</button><br />
         {(blog.user.username === user.username)
           ? <button onClick={removeBlog}>delete</button>
           : null}

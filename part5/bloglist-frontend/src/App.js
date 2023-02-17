@@ -77,6 +77,7 @@ const App = () => {
         <div>
           username
           <input
+            id='username'
             type="text"
             value={username}
             name="Username"
@@ -86,13 +87,14 @@ const App = () => {
         <div>
           password
           <input
+            id='password'
             type="text"
             value={password}
             name="Password"
             onChange={({ target }) => setPassword(target.value)}
           />
         </div>
-        <button type="submit">login</button>
+        <button id="login-button" type="submit">login</button>
       </form>
     </div>
   )
@@ -116,7 +118,6 @@ const App = () => {
     }}
 
   const updateLikes = async (id) => {
-
     const blog = blogs.find(n => n.id === id)
     const changedBlog = { ...blog, likes: blog.likes + 1 }
     try {
@@ -126,6 +127,7 @@ const App = () => {
       setTimeout(() => {setSuccesMessage(null)}, 5000)
     } catch(exception) {
       setErrorMessage('Can not like this blog')
+      console.log(changedBlog)
       setTimeout(() => {setErrorMessage(null)}, 5000)
     }
   }
@@ -161,17 +163,20 @@ const App = () => {
       <Togglable buttonLabel="new blog" ref={blogFormRef}>
         <BlogForm createBlog={createBlog} />
       </Togglable>
-      {blogs
-        .sort((a,b) => b.likes - a.likes)
-        .map(blog =>
-          <Blog
-            key={blog.id}
-            blog={blog}
-            updateLikes={() => updateLikes(blog.id)}
-            removeBlog={() => removeBlog(blog.id)}
-            user={user}
-          />
-        )}
+      <div className="blog">
+        {blogs
+          .sort((a,b) => b.likes - a.likes)
+          .map(blog =>
+            <Blog
+              key={blog.id}
+              blog={blog}
+              updateLikes={() => updateLikes(blog.id)}
+              removeBlog={() => removeBlog(blog.id)}
+              user={user}
+            />
+          )
+        }
+      </div>
     </div>
   )
   return (
