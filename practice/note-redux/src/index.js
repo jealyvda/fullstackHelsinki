@@ -1,26 +1,15 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { store } from './reducers/noteReducer'
+import { createStore } from 'redux'
+import { Provider } from 'react-redux'
 
-const App = () => {
-  return(
-    <div>
-      <ul>
-        {store.getState().map(note=>
-          <li key={note.id}>
-            {note.content} <strong>{note.important ? 'important' : ''}</strong>
-          </li>
-        )}
-        </ul>
-    </div>
-  )
-}
+import App from './App'
+import noteReducer from './reducers/noteReducer'
 
-const root = ReactDOM.createRoot(document.getElementById('root'))
+const store = createStore(noteReducer)
 
-const renderApp = () => {
-  root.render(<App />)
-}
-
-renderApp()
-store.subscribe(renderApp)
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <Provider store={store}>
+    <App />
+  </Provider>
+)
