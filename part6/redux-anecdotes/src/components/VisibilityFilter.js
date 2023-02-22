@@ -1,12 +1,11 @@
 import { useDispatch } from 'react-redux'
-import { filterChange } from '../reducers/filterReducer'
+import { setFilter } from '../reducers/filterReducer'
 
 const VisibilityFilter = () => {
   const dispatch = useDispatch()
 
   const handleChange = (event) => {
-    dispatch(filterChange(event.target.value))
-    // input-field value is event.target.value
+    dispatch(setFilter(event.target.value))
   }
 
   const style = {
