@@ -1,31 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit"
-
-const getId = () => (100000 * Math.random()).toFixed(0)
-
-const asObject = (anecdote) => {
-  return {
-    content: anecdote,
-    id: getId(),
-    votes: 0
-  }
-}
+import anecdoteService from '../services/anecdotes'
 
 const anecdoteSlice = createSlice({
   name: 'anecdote',
   initialState: [],
   reducers: {
-    voteOn(state, action) {
-      const id = action.payload
-      const anecdoteToChange = state.find(n => n.id === id)
-      const changedAnecdote = {
-        ...anecdoteToChange,
-        votes: anecdoteToChange.votes + 1
-      }
-      return state.map(anecdote => 
-        anecdote.id !== id ? anecdote : changedAnecdote)
-    },
-    createAnecdote(state, action) {
-      return state.concat(asObject(action.payload))
+    appendAnecdote(state, action) {
+      state.push(action.payload)
     },
     setAnecdotes(state, action) {
       return action.payload
@@ -33,5 +14,35 @@ const anecdoteSlice = createSlice({
   }
 })
 
-export const { createAnecdote, voteOn, setAnecdotes } = anecdoteSlice.actions
+export const { appendAnecdote, setAnecdotes } = anecdoteSlice.actions
+
+export const initializeAnecdotes = () => {
+  return async dispatch => {
+    const anecdotes = await anecdoteService.getAll()
+    dispatch(setAnecdotes(anecdotes))
+  }
+}
+
+export const createAnecdote = content => {
+  return async dispatch => {
+    const newAnecdote = await anecdoteService.create(content)
+    dispatch(appendAnecdote(newAnecdote))
+  }
+}
+
+export const voteOn = id => {
+  return async dispatch => {
+    const anecdotes = await anecdoteService.getAll()
+    const anecdote = anecdotes.find(n => n.id === id)
+    const changedAnecdote = {
+      ...anecdote,
+      votes: anecdote.votes + 1
+    }
+    const updatedAnecdote = await anecdoteService.update(changedAnecdote.id, changedAnecdote)
+    dispatch(setAnecdotes(anecdotes.map(anecdote =>
+      anecdote.id !== id ? anecdote : updatedAnecdote
+    )))
+  }
+}
+
 export default anecdoteSlice.reducer
