@@ -1,5 +1,5 @@
 # Full Stack Course from the University of Helsinki
-Personal Submissions from Jealy van den Aker, readme last updated on 1-2-2023
+Personal Submissions from Jealy van den Aker, readme last updated on 27-2-2023
 
 All course materials and learning objectives can be found here: https://fullstackopen.com/en/
 
@@ -19,10 +19,11 @@ The final chapters (connecting to servers, databases and deploying to the intern
 ## Chapters 4-13: Bloglist
 All chapters going forward focus on developping a Bloglist app. The current webapp is not yet deployed to the internet, but the source code can be found in the respective folders. Note that the newer folders are copies of the older folders with new functionalities. This is necessary for the grading scheme by the University of Helsinki.
 
-The concepts discussed in these chapters, up until Chapter 5, include:
-* Front-end and back-end testing
+The concepts discussed in these chapters, up until Chapter 6, include:
+* Front-end and back-end testing (Cypress, Jest)
 * User administration and login
 * Token authentication
+* State management (Redux, React Query)
 
 ## Notes App
 Besides the individual programming exercises, the course continuously builds on the Notes app to illustrate concepts and provide examples. 
