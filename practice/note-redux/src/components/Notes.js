@@ -1,5 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { toggleImportanceOf } from '../reducers/noteReducer'
+import NewNote from './NewNote'
+import VisibilityFilter from './VisibilityFilter'
 
 const Note = ({ note, handleClick }) => {
   return(
@@ -22,7 +24,9 @@ const Notes = () => {
   }
 )
 
-  return(
+  return(<div>
+              <NewNote />
+          <VisibilityFilter />
     <ul>
       {notes.map(note =>
         <Note
@@ -34,6 +38,7 @@ const Notes = () => {
         />
       )}
     </ul>
+    </div>
   )
 }
 
