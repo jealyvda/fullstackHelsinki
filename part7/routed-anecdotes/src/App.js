@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import {Routes, Route, Link, Navigate, useNavigate, useMatch, useParams} from 'react-router-dom'
+import {Routes, Route, Link, useNavigate, useMatch} from 'react-router-dom'
 import { useField } from './hooks'
 import { useSelector } from 'react-redux'
 
@@ -71,9 +71,6 @@ const Notification = ({ message }) => {
 }
 
 const CreateNew = (props) => {
-  // const [content, setContent] = useState('')
-  // const [author, setAuthor] = useState('')
-  // const [info, setInfo] = useState('')
   const content = useField('text')
   const author = useField('text')
   const info = useField('text')
@@ -86,23 +83,14 @@ const CreateNew = (props) => {
       info: info.value,
       votes: 0
     })
-
   }
 
-  const resetAll = (e) => {
+  const handleReset = (e) => {
     e.preventDefault()
     content.resetValue()
     author.resetValue()
     info.resetValue()
   }
-
-  const selectedFields = useSelector(
-    ({ input }) => ({
-      type: input.type,
-      value: input.value,
-      onChange: input.onChange,
-    })
-  )
 
 
   return (
@@ -111,7 +99,7 @@ const CreateNew = (props) => {
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input {...selectedFields(content)} />
+          <input {...content} />
         </div>
         <div>
           author
@@ -122,12 +110,13 @@ const CreateNew = (props) => {
           <input {...info} />
         </div>
         <button type='submit'>create</button>
-        <button type='reset' onClick={resetAll}>reset</button>
+        <button type='reset' onClick={handleReset}>reset</button>
       </form>
     </div>
   )
 
 }
+
 
 const App = () => {
   const [anecdotes, setAnecdotes] = useState([
@@ -153,7 +142,7 @@ const App = () => {
   const addNew = (anecdote) => {
     anecdote.id = Math.round(Math.random() * 10000)
     setAnecdotes(anecdotes.concat(anecdote))
-    navigate('/')
+    navigate('/create')
     setNotification(`A new anecdote ${anecdote.content} was successfully created!`)
     setTimeout(() => {
       setNotification('')
@@ -188,8 +177,8 @@ const App = () => {
         <Menu />
         <Notification message={notification} />
         <Routes>
-          <Route path="/anecdotes/:id" element={<Anecdote anecdote={anecdote} />} />
           <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />}/>
+          <Route path="/anecdotes/:id" element={<Anecdote anecdote={anecdote} />} />
           <Route path="/about" element={<About />}/>
           <Route path="/create" element={<CreateNew addNew={addNew} />}/>
         </Routes>
