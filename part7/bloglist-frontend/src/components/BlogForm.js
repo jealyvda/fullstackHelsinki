@@ -1,40 +1,38 @@
-import { useState } from 'react'
-import PropTypes from 'prop-types'
+import { useState } from "react";
+import PropTypes from "prop-types";
 
 const BlogForm = ({ createBlog }) => {
-  const [author, setAuthor] = useState('')
-  const [title, setTitle] = useState('')
-  const [url, setUrl] = useState('')
+  const [author, setAuthor] = useState("");
+  const [title, setTitle] = useState("");
+  const [url, setUrl] = useState("");
 
   const handleTitleChange = (event) => {
-    setTitle(event.target.value)
-  }
+    setTitle(event.target.value);
+  };
 
   const handleAuthorChange = (event) => {
-    setAuthor(event.target.value)
-  }
+    setAuthor(event.target.value);
+  };
 
   const handleUrlChange = (event) => {
-    setUrl(event.target.value)
-  }
+    setUrl(event.target.value);
+  };
 
   const addBlog = (event) => {
-    event.preventDefault()
+    event.preventDefault();
     createBlog({
       title: title,
       author: author,
       url: url,
-    })
-    setTitle('')
-    setAuthor('')
-    setUrl('')
-  }
+    });
+    setTitle("");
+    setAuthor("");
+    setUrl("");
+  };
 
   return (
     <div>
-      <h1>
-      Create new
-      </h1>
+      <h1>Create new</h1>
       <form onSubmit={addBlog}>
         <div>
           title
@@ -69,14 +67,16 @@ const BlogForm = ({ createBlog }) => {
             placeholder="url"
           />
         </div>
-        <button id="create-blog" type="submit">Create</button>
+        <button id="create-blog" type="submit">
+          Create
+        </button>
       </form>
     </div>
-  )
-}
+  );
+};
 
 BlogForm.propTypes = {
-  createBlog: PropTypes.func.isRequired
-}
+  createBlog: PropTypes.func.isRequired,
+};
 
-export default BlogForm
+export default BlogForm;
