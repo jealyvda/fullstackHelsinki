@@ -1,23 +1,167 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+
 import Blog from "./components/Blog";
 import BlogForm from "./components/BlogForm";
 import Notification from "./components/Notification";
-import Togglable from "./components/Togglable";
-import blogService from "./services/blogs";
+//import Togglable from "./components/Togglable";
+import blogService, {
+  getBlogs,
+  addBlog,
+  updateBlog,
+  removeBlog,
+} from "./services/blogs";
 import loginService from "./services/login";
+import { notificationDispatch } from "./context/NotificationContext";
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [succesMessage, setSuccesMessage] = useState(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
-  }, []);
+  const queryClient = useQueryClient();
 
+  // Notification messages
+  const dispatch = notificationDispatch();
+
+  // Fetch the full blog-list
+  const result = useQuery({
+    queryKey: ["blogs"],
+    queryFn: getBlogs,
+    retry: 2,
+    refetchOnWindowFocus: false,
+  });
+
+  if (result.isLoading) return <div>Loading blogs...</div>;
+  if (result.isError)
+    return <div>An error has occurred: {result.error.message}</div>;
+
+  let blogs = [];
+
+  if (result.isSuccess) {
+    console.log(result.isSuccess);
+    console.log(result.data);
+    blogs = result.data;
+  }
+
+  // Create a new blog
+  const newBlogMutation = useMutation({
+    mutationFn: addBlog,
+    onSuccess: (newBlog) => {
+      const blogs = queryClient.getQueryData(["blogs"]);
+      queryClient.setQueryData(["blogs"], [...blogs, newBlog]);
+      dispatch({
+        type: "showNotification",
+        payload: {
+          message: `${newBlog.title} from ${newBlog.author} successfully created`,
+          type: "success",
+        },
+      });
+      setTimeout(() => {
+        dispatch({ type: "hideNotification" });
+      }, 5000);
+    },
+    onError: (newBlog) => {
+      dispatch({
+        type: "showNotification",
+        payload: {
+          message: `${newBlog.title} could not be created`,
+          type: "error",
+        },
+      });
+      setTimeout(() => {
+        dispatch({ type: "hideNotification" });
+      }, 5000);
+    },
+  });
+
+  const createBlog = async (blog) => {
+    newBlogMutation.mutate(blog);
+  };
+
+  // Update the likes of a blogpost
+  const updateBlogMutation = useMutation({
+    mutationFn: updateBlog,
+    onSuccess: (changedBlog) => {
+      const blogs = queryClient.getQueryData(["blogs"]);
+      queryClient.setQueryData(["blogs"], [...blogs, changedBlog]);
+      dispatch({
+        type: "showNotification",
+        payload: {
+          message: `${changedBlog.title} from ${changedBlog.author} successfully liked`,
+          type: "success",
+        },
+      });
+      setTimeout(() => {
+        dispatch({ type: "hideNotification" });
+      }, 5000);
+    },
+    onError: () => {
+      dispatch({
+        type: "showNotification",
+        payload: { message: `Blog could not be liked`, type: "error" },
+      });
+      setTimeout(() => {
+        dispatch({ type: "hideNotification" });
+      }, 5000);
+    },
+  });
+
+  const updateLikes = (id) => {
+    const blog = blogs.find((n) => n.id === id);
+    const changedBlog = { ...blog, likes: blog.likes + 1 };
+    updateBlogMutation.mutate(changedBlog);
+  };
+
+  // Delete a blogpost
+  const deleteBlogMutation = useMutation({
+    mutationFn: removeBlog,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["blogs"] });
+      dispatch({
+        type: "showNotification",
+        payload: {
+          message: `${data.title} from ${data.author} successfully deleted`,
+          type: "success",
+        },
+      });
+      setTimeout(() => {
+        dispatch({ type: "hideNotification" });
+      }, 5000);
+    },
+    onError: () => {
+      dispatch({
+        type: "showNotification",
+        payload: { message: `Blog could not be deleted`, type: "error" },
+      });
+      setTimeout(() => {
+        dispatch({ type: "hideNotification" });
+      }, 5000);
+    },
+  });
+
+  const deleteBlog = async (id) => {
+    const blog = blogs.find((n) => n.id === id);
+    if (
+      window.confirm(
+        `Do you really want to delete ${blog.title} by ${blog.author}?`,
+      )
+    ) {
+      deleteBlogMutation.mutate(id);
+      dispatch({
+        type: "showNotification",
+        payload: {
+          message: `${blog.title} from ${blog.author} successfully deleted`,
+          type: "success",
+        },
+      });
+      setTimeout(() => {
+        dispatch({ type: "hideNotification" });
+      }, 5000);
+    }
+  };
+
+  // Login users
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
     if (loggedUserJSON) {
@@ -42,14 +186,24 @@ const App = () => {
       setUser(user);
       setUsername("");
       setPassword("");
-      setSuccesMessage(`${user.name} is succesfully logged in!`);
+      dispatch({
+        type: "showNotification",
+        payload: {
+          message: `${user.name} is succesfully logged in.`,
+          type: "success",
+        },
+      });
       setTimeout(() => {
-        setSuccesMessage(null);
+        dispatch({ type: "hideNotification" });
       }, 5000);
     } catch (exception) {
-      setErrorMessage("Wrong credentials");
+      dispatch({
+        type: "showNotification",
+        payload: { message: "Wrong credentials", type: "error" },
+      });
+      console.log(exception);
       setTimeout(() => {
-        setErrorMessage(null);
+        dispatch({ type: "hideNotification" });
       }, 5000);
     }
   };
@@ -57,9 +211,15 @@ const App = () => {
   const handleLogout = (event) => {
     event.preventDefault();
     blogService.setToken(null);
-    setSuccesMessage(`${user.name} is succesfully logged out.`);
+    dispatch({
+      type: "showNotification",
+      payload: {
+        message: `${user.name} is succesfully logged out.`,
+        type: "success",
+      },
+    });
     setTimeout(() => {
-      setSuccesMessage(null);
+      dispatch({ type: "hideNotification" });
     }, 5000);
 
     setUser(null);
@@ -67,6 +227,7 @@ const App = () => {
     window.localStorage.clear();
   };
 
+  // Login form
   const loginForm = () => (
     <div>
       <h1>Log in to application</h1>
@@ -98,71 +259,7 @@ const App = () => {
     </div>
   );
 
-  const createBlog = async (blog) => {
-    try {
-      const createdBlog = await blogService.create(blog);
-      blogFormRef.current.toggleVisibility();
-      setBlogs(blogs.concat(createdBlog));
-      setSuccesMessage(
-        `${createdBlog.title} by ${createdBlog.author} is succesfully added`,
-      );
-      setTimeout(() => {
-        setSuccesMessage(null);
-      }, 5000);
-    } catch (exception) {
-      setErrorMessage("Can not add blog");
-      setTimeout(() => {
-        setErrorMessage(null);
-      }, 5000);
-    }
-  };
-
-  const updateLikes = async (id) => {
-    const blog = blogs.find((n) => n.id === id);
-    const changedBlog = { ...blog, likes: blog.likes + 1 };
-    try {
-      const updatedBlog = await blogService.update(id, changedBlog);
-      setBlogs(blogs.map((n) => (n.id !== id ? n : updatedBlog)));
-      setSuccesMessage(`${updatedBlog.title} has been succesfully liked!`);
-      setTimeout(() => {
-        setSuccesMessage(null);
-      }, 5000);
-    } catch (exception) {
-      setErrorMessage("Can not like this blog");
-      console.log(changedBlog);
-      setTimeout(() => {
-        setErrorMessage(null);
-      }, 5000);
-    }
-  };
-
-  const removeBlog = async (id) => {
-    const blog = blogs.find((n) => n.id === id);
-    if (
-      window.confirm(
-        `Do you really want to delete ${blog.title} by ${blog.author}?`,
-      )
-    ) {
-      try {
-        await blogService.remove(id);
-        setBlogs(blogs.filter((n) => n.id !== id));
-        setSuccesMessage(
-          `${blog.title} by ${blog.author} has been succesfully deleted`,
-        );
-        setTimeout(() => {
-          setSuccesMessage(null);
-        }, 5000);
-      } catch (exception) {
-        setErrorMessage("Can not delete this blog");
-        setTimeout(() => {
-          setErrorMessage(null);
-        }, 5000);
-      }
-    }
-  };
-
-  const blogFormRef = useRef();
-
+  // Overview of all blogs
   const blogOverview = () => (
     <div>
       <h1>Blogs</h1>
@@ -170,9 +267,7 @@ const App = () => {
       <form onSubmit={handleLogout}>
         <button type="submit">logout</button>
       </form>
-      <Togglable buttonLabel="new blog" ref={blogFormRef}>
-        <BlogForm createBlog={createBlog} />
-      </Togglable>
+      <BlogForm createBlog={createBlog} />
       <div className="blog">
         {blogs
           .sort((a, b) => b.likes - a.likes)
@@ -181,17 +276,17 @@ const App = () => {
               key={blog.id}
               blog={blog}
               updateLikes={() => updateLikes(blog.id)}
-              removeBlog={() => removeBlog(blog.id)}
+              removeBlog={() => deleteBlog(blog.id)}
               user={user}
             />
           ))}
       </div>
     </div>
   );
+
   return (
     <div>
-      <Notification message={errorMessage} type={"error"} />
-      <Notification message={succesMessage} type={"succes"} />
+      {<Notification />}
       {user === null ? loginForm() : blogOverview()}
     </div>
   );
