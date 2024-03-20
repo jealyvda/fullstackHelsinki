@@ -137,29 +137,32 @@ const App = () => {
   return (
     <div>
       <Notification />
-      <Router>
-        <div className="navigation">
-          <Link to="/">Home</Link>
-          <Link to="/users">Users</Link>
 
-          <div>
-            <span>{user.name}</span>
-            <form onSubmit={handleLogout}>
-              <button type="submit">logout</button>
-            </form>
+      {!user ? loginForm() :
+        <Router>
+          <div className="navigation">
+            <Link to="/">Home</Link>
+            <Link to="/users">Users</Link>
+
+            <div>
+              <span>{user.name}</span>
+              <form onSubmit={handleLogout}>
+                <button type="submit">logout</button>
+              </form>
+            </div>
           </div>
-        </div>
 
-        {user === null ? loginForm() : null}
+          
 
-        <h1>Blogs</h1>
-        <Routes>
-          <Route path="/" element={blogOverview()} />
-          <Route path="/users" element={<Users />} />
-          <Route path="/users/:id" element={<User />} />
-          <Route path="/blogs/:id" element={<Blog />} />
-        </Routes>
-      </Router>
+          <h1>Blogs</h1>
+          <Routes>
+            <Route path="/" element={blogOverview()} />
+            <Route path="/users" element={<Users />} />
+            <Route path="/users/:id" element={<User />} />
+            <Route path="/blogs/:id" element={<Blog />} />
+          </Routes>
+        </Router>
+      }
     </div>
   );
 };
