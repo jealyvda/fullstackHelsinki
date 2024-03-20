@@ -1,71 +1,70 @@
-import { useState } from "react";
-import PropTypes from "prop-types";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { notificationDispatch } from "../context/Notification";
+import { addBlog } from "../services/blogs";
 
-const BlogForm = ({ createBlog }) => {
-  const [author, setAuthor] = useState("");
-  const [title, setTitle] = useState("");
-  const [url, setUrl] = useState("");
+const BlogForm = () => {
+  const queryClient = useQueryClient();
 
-  const handleTitleChange = (event) => {
-    setTitle(event.target.value);
-  };
+  const notify = notificationDispatch();
 
-  const handleAuthorChange = (event) => {
-    setAuthor(event.target.value);
-  };
-
-  const handleUrlChange = (event) => {
-    setUrl(event.target.value);
-  };
-
-  const addBlog = (event) => {
+  const addNewBlog = (event) => {
     event.preventDefault();
-    createBlog({
+
+    const title = event.target.title.value;
+    const author = event.target.author.value;
+    const url = event.target.url.value;
+
+    event.target.title.value = "";
+    event.target.author.value = "";
+    event.target.url.value = "";
+
+    newBlogMutation.mutate({
       title: title,
       author: author,
       url: url,
     });
-    setTitle("");
-    setAuthor("");
-    setUrl("");
   };
+
+  // Create a new blog
+  const newBlogMutation = useMutation({
+    mutationFn: addBlog,
+    onSuccess: (newBlog) => {
+      const blogs = queryClient.getQueryData(["blogs"]);
+      queryClient.setQueryData(["blogs"], [...blogs, newBlog]);
+      notify({
+        type: "showNotification",
+        payload: {
+          message: `${newBlog.title} from ${newBlog.author} successfully created`,
+          type: "success",
+        },
+      });
+    },
+    onError: (newBlog) => {
+      notify({
+        type: "showNotification",
+        payload: {
+          message: `${newBlog.title} could not be created`,
+          type: "error",
+        },
+      });
+    },
+  });
 
   return (
     <div>
       <h1>Create new</h1>
-      <form onSubmit={addBlog}>
+      <form onSubmit={addNewBlog}>
         <div>
           title
-          <input
-            type="text"
-            value={title}
-            id="title"
-            name="Title"
-            onChange={handleTitleChange}
-            placeholder="title"
-          />
+          <input type="text" id="title" name="Title" placeholder="title" />
         </div>
         <div>
           author
-          <input
-            type="text"
-            value={author}
-            id="author"
-            name="Author"
-            onChange={handleAuthorChange}
-            placeholder="author"
-          />
+          <input type="text" id="author" name="Author" placeholder="author" />
         </div>
         <div>
           URL
-          <input
-            type="text"
-            value={url}
-            id="url"
-            name="URL"
-            onChange={handleUrlChange}
-            placeholder="url"
-          />
+          <input type="text" id="url" name="URL" placeholder="url" />
         </div>
         <button id="create-blog" type="submit">
           Create
@@ -73,10 +72,6 @@ const BlogForm = ({ createBlog }) => {
       </form>
     </div>
   );
-};
-
-BlogForm.propTypes = {
-  createBlog: PropTypes.func.isRequired,
 };
 
 export default BlogForm;

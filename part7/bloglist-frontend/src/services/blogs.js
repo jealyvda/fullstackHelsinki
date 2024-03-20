@@ -32,11 +32,12 @@ export const updateBlog = (updatedBlog) => {
   return response.then((response) => response.data);
 };
 
-export const removeBlog = (id) => {
+export const removeBlog = async (blog) => {
   const config = {
     headers: { Authorization: token },
   };
-  axios.delete(`${baseUrl}/${id}`, config);
+  await axios.delete(`${baseUrl}/${blog.id}`, config);
+  return blog;
 };
 
 export default { setToken };

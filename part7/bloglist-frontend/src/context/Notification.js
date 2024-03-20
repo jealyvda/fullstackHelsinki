@@ -3,6 +3,9 @@ import { createContext, useReducer, useContext } from "react";
 export const notificationReducer = (state, action) => {
   switch (action.type) {
     case "showNotification":
+      if (!("autoHide" in action.payload)) {
+        action.payload.autoHide = 5000;
+      }
       return action.payload;
     case "hideNotification":
       return "";
