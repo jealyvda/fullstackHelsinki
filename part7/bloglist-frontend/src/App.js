@@ -100,16 +100,6 @@ const App = () => {
     </div>
   );
 
-  const userInfo = () => (
-    <div>
-      <h1>Blogs</h1>
-      <p>{user.name} logged in</p>
-      <form onSubmit={handleLogout}>
-        <button type="submit">logout</button>
-      </form>
-    </div>
-  );
-
   // Fetch the full blog-list
   const result = useQuery({
     queryKey: ["blogs"],
@@ -133,7 +123,6 @@ const App = () => {
     <div>
       <BlogForm />
       <div className="blog">
-        
         {blogs
           .sort((a, b) => b.likes - a.likes)
           .map((blog) => (
@@ -149,13 +138,21 @@ const App = () => {
     <div>
       <Notification />
       <Router>
-        <div>
+        <div className="navigation">
           <Link to="/">Home</Link>
           <Link to="/users">Users</Link>
+
+          <div>
+            <span>{user.name}</span>
+            <form onSubmit={handleLogout}>
+              <button type="submit">logout</button>
+            </form>
+          </div>
         </div>
 
-        {user === null ? loginForm() : userInfo()}
+        {user === null ? loginForm() : null}
 
+        <h1>Blogs</h1>
         <Routes>
           <Route path="/" element={blogOverview()} />
           <Route path="/users" element={<Users />} />

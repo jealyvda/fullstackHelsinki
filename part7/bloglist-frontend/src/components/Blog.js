@@ -40,17 +40,23 @@ const Blog = ({ blog }) => {
     }
   }, []);
 
-  const updateLikes = (id) => {
-    const blogs = queryClient.getQueryData(["blogs"]);
-    const blog = blogs.find((n) => n.id === id);
+  const updateLikes = (blog) => {
     const changedBlog = { ...blog, likes: blog.likes + 1 };
     updateBlogMutation.mutate(changedBlog);
-  };
+  }; 
+
+  const addComment = (event, blog) => {
+    event.preventDefault();
+    const comment = event.target.comment.value;
+
+    event.target.comment.value = "";
+    const changedBlog = { ...blog, comments: [...blog.comments, comment]}
+    console.log(changedBlog);
+    updateBlogMutation.mutate(changedBlog);
+  }
 
   // Remove blog
-  const deleteBlog = async (id) => {
-    const blogs = queryClient.getQueryData(["blogs"]);
-    const blog = blogs.find((n) => n.id === id);
+  const deleteBlog = async (blog) => {
     const message = `Do you really want to delete ${blog.title} by ${blog.author}?`;
 
     if (window.confirm(message)) {
@@ -73,7 +79,7 @@ const Blog = ({ blog }) => {
       notify({
         type: "showNotification",
         payload: {
-          message: `${changedBlog.title} from ${changedBlog.author} successfully liked`,
+          message: `${changedBlog.title} by ${changedBlog.author} successfully updated`,
           type: "success"
         },
       });
@@ -81,7 +87,7 @@ const Blog = ({ blog }) => {
     onError: () => {
       notify({
         type: "showNotification",
-        payload: { message: `Blog could not be liked`, type: "error" },
+        payload: { message: `Blog could not be updated`, type: "error" },
       });
     },
   });
@@ -109,6 +115,7 @@ const Blog = ({ blog }) => {
 
   if (currentBlog) {
     return (
+      <div>
       <div style={blogStyle}>
         <div className="blogContent">
           <h2>Title: {currentBlog.title}</h2>
@@ -116,14 +123,27 @@ const Blog = ({ blog }) => {
           Author:{currentBlog.author} <br />
           URL: {currentBlog.url} <br />
           Likes: {currentBlog.likes}{" "}
-          <button id="like-button" onClick={() => updateLikes(currentBlog.id)}>
+          <button id="like-button" onClick={() => updateLikes(currentBlog)}>
             like
           </button>
           <br />
           {currentBlog.user.username === user.username ? (
-            <button onClick={() => deleteBlog(currentBlog.id)}>delete</button>
+            <button onClick={() => deleteBlog(currentBlog)}>delete</button>
           ) : null}
         </div>
+      </div>
+
+      <h3>Comments</h3>
+      <form onSubmit={(e) => addComment(e, currentBlog)}>
+        <input type="text" id="comment"></input>
+        <button type="submit">Comment</button>
+      </form>
+
+      {currentBlog.comments.length > 0 ? 
+        <ul key={currentBlog.comments.length}>
+          {currentBlog.comments.map((comment) => <li key={comment}>{comment}</li>)}
+        </ul>
+      : null}
       </div>
     );
   } else {
