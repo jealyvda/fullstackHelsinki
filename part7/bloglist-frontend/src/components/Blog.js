@@ -1,18 +1,19 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { notificationDispatch } from "../context/Notification";
 import { useUserValue } from "../context/User";
-import { removeBlog, updateBlog } from "../services/blogs";
+import { removeBlog, updateBlog, getBlog } from "../services/blogs";
+import { useParams } from "react-router-dom";
 import PropTypes from "prop-types";
 
 const Blog = ({ blog }) => {
+  const [currentBlog, setBlog] = useState(blog);
+  const id = useParams().id;
   const queryClient = useQueryClient();
 
   const notify = notificationDispatch();
 
   const user = useUserValue();
-
-  const [visible, setVisible] = useState(false);
 
   const blogStyle = {
     paddingTop: 10,
@@ -22,12 +23,22 @@ const Blog = ({ blog }) => {
     marginBottom: 5,
   };
 
-  const hideWhenVisible = { display: visible ? "none" : "" };
-  const showWhenVisible = { display: visible ? "" : "none" };
+  useEffect(() => {
+    const fetchBlog = async () => {
+      try {
+        const response = await getBlog(id);
+        setBlog(response);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
 
-  const toggleVisibility = () => {
-    setVisible(!visible);
-  };
+    if (blog === undefined) {
+      fetchBlog();
+    } else {
+      setBlog(blog);
+    }
+  }, []);
 
   const updateLikes = (id) => {
     const blogs = queryClient.getQueryData(["blogs"]);
@@ -58,11 +69,12 @@ const Blog = ({ blog }) => {
           return blog.id === changedBlog.id ? changedBlog : blog;
         }),
       );
+      setBlog(changedBlog);
       notify({
         type: "showNotification",
         payload: {
           message: `${changedBlog.title} from ${changedBlog.author} successfully liked`,
-          type: "success",
+          type: "success"
         },
       });
     },
@@ -79,7 +91,6 @@ const Blog = ({ blog }) => {
     mutationFn: removeBlog,
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["blogs"] });
-      console.log(data);
       notify({
         type: "showNotification",
         payload: {
@@ -96,31 +107,28 @@ const Blog = ({ blog }) => {
     },
   });
 
-  return (
-    <div style={blogStyle}>
-      <div style={hideWhenVisible}>
-        Title: {blog.title} <br />
-        Author: {blog.author}
-        <button onClick={toggleVisibility} id="view">
-          view
-        </button>
+  if (currentBlog) {
+    return (
+      <div style={blogStyle}>
+        <div className="blogContent">
+          <h2>Title: {currentBlog.title}</h2>
+          <br />
+          Author:{currentBlog.author} <br />
+          URL: {currentBlog.url} <br />
+          Likes: {currentBlog.likes}{" "}
+          <button id="like-button" onClick={() => updateLikes(currentBlog.id)}>
+            like
+          </button>
+          <br />
+          {currentBlog.user.username === user.username ? (
+            <button onClick={() => deleteBlog(currentBlog.id)}>delete</button>
+          ) : null}
+        </div>
       </div>
-      <div style={showWhenVisible} className="blogContent">
-        Title: {blog.title} <button onClick={toggleVisibility}>hide</button>
-        <br />
-        Author:{blog.author} <br />
-        URL: {blog.url} <br />
-        Likes: {blog.likes}{" "}
-        <button id="like-button" onClick={() => updateLikes(blog.id)}>
-          like
-        </button>
-        <br />
-        {blog.user.username === user.username ? (
-          <button onClick={() => deleteBlog(blog.id)}>delete</button>
-        ) : null}
-      </div>
-    </div>
-  );
+    );
+  } else {
+    return null;
+  }
 };
 
 Blog.propTypes = {

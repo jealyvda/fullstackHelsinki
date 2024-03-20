@@ -12,6 +12,11 @@ export const getBlogs = () => {
   return response.then((response) => response.data);
 };
 
+export const getBlog = (id) => {
+  const response = axios.get(`${baseUrl}/${id}`);
+  return response.then((response) => response.data);
+}
+
 export const addBlog = (newBlog) => {
   const config = {
     headers: { Authorization: token },

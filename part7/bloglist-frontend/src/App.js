@@ -9,6 +9,10 @@ import blogService, { getBlogs } from "./services/blogs";
 import loginService from "./services/login";
 import { notificationDispatch } from "./context/Notification";
 import UserContext from "./context/User";
+import Users from "./components/Users";
+import User from "./components/User";
+
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
 const App = () => {
   const [user, userDispatch] = useContext(UserContext);
@@ -96,6 +100,16 @@ const App = () => {
     </div>
   );
 
+  const userInfo = () => (
+    <div>
+      <h1>Blogs</h1>
+      <p>{user.name} logged in</p>
+      <form onSubmit={handleLogout}>
+        <button type="submit">logout</button>
+      </form>
+    </div>
+  );
+
   // Fetch the full blog-list
   const result = useQuery({
     queryKey: ["blogs"],
@@ -117,17 +131,15 @@ const App = () => {
   // Overview of all blogs
   const blogOverview = () => (
     <div>
-      <h1>Blogs</h1>
-      <p>{user.name} logged in</p>
-      <form onSubmit={handleLogout}>
-        <button type="submit">logout</button>
-      </form>
       <BlogForm />
       <div className="blog">
+        
         {blogs
           .sort((a, b) => b.likes - a.likes)
           .map((blog) => (
-            <Blog key={blog.id} blog={blog} />
+            <div key={blog.id}>
+              <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+            </div>
           ))}
       </div>
     </div>
@@ -136,7 +148,21 @@ const App = () => {
   return (
     <div>
       <Notification />
-      {user === null ? loginForm() : blogOverview()}
+      <Router>
+        <div>
+          <Link to="/">Home</Link>
+          <Link to="/users">Users</Link>
+        </div>
+
+        {user === null ? loginForm() : userInfo()}
+
+        <Routes>
+          <Route path="/" element={blogOverview()} />
+          <Route path="/users" element={<Users />} />
+          <Route path="/users/:id" element={<User />} />
+          <Route path="/blogs/:id" element={<Blog />} />
+        </Routes>
+      </Router>
     </div>
   );
 };

@@ -8,7 +8,11 @@ export const notificationReducer = (state, action) => {
       }
       return action.payload;
     case "hideNotification":
-      return "";
+      return {
+        type: "",
+        message: "",
+        autoHide: 5000,
+      };
     default:
       return state;
   }
@@ -19,7 +23,11 @@ const NotificationContext = createContext();
 export const NotificationContextProvider = (props) => {
   const [notification, notificationDispatch] = useReducer(
     notificationReducer,
-    "",
+    {
+        type: "",
+        message: "",
+        autoHide: 5000,
+      },
   );
 
   return (
