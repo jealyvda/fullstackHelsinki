@@ -51,25 +51,27 @@ const BlogForm = () => {
   });
 
   return (
-    <div>
-      <h1>Create new</h1>
-      <form onSubmit={addNewBlog}>
-        <div>
-          title
-          <input type="text" id="title" name="Title" placeholder="title" />
-        </div>
-        <div>
-          author
-          <input type="text" id="author" name="Author" placeholder="author" />
-        </div>
-        <div>
-          URL
-          <input type="text" id="url" name="URL" placeholder="url" />
-        </div>
-        <button id="create-blog" type="submit">
-          Create
-        </button>
-      </form>
+    <div className="center-content">
+      <div className="blog-form">
+        <h3>Create new blog</h3>
+        <form onSubmit={addNewBlog}>
+          <div>
+            <label>Title</label>
+            <input type="text" id="title" name="Title" placeholder="title" />
+          </div>
+          <div>
+            <label>Author</label>
+            <input type="text" id="author" name="Author" placeholder="author" />
+          </div>
+          <div>
+            <label>URL</label>
+            <input type="text" id="url" name="URL" placeholder="url" />
+          </div>
+          <button id="create-blog" type="submit">
+            Create
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

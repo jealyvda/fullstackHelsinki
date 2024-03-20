@@ -82,21 +82,23 @@ const App = () => {
 
   // Login form
   const loginForm = () => (
-    <div>
-      <h1>Log in to application</h1>
-      <form onSubmit={handleLogin}>
-        <div>
-          username
-          <input id="username" type="text" name="Username" />
-        </div>
-        <div>
-          password
-          <input id="password" type="text" name="Password" />
-        </div>
-        <button id="login-button" type="submit">
-          login
-        </button>
-      </form>
+    <div className="center-content">
+      <div className="login-form">
+        <h1>Log in</h1>
+        <form onSubmit={handleLogin}>
+          <div>
+            <label>Username:</label>
+            <input id="username" type="text" name="Username" />
+          </div>
+          <div>
+            <label>Password:</label>
+            <input id="password" type="text" name="Password" />
+          </div>
+          <button id="login-button" type="submit">
+            Login
+          </button>
+        </form>
+      </div>
     </div>
   );
 
@@ -121,49 +123,64 @@ const App = () => {
   // Overview of all blogs
   const blogOverview = () => (
     <div>
-      <BlogForm />
-      <div className="blog">
+      <div className="blog-list">
         {blogs
           .sort((a, b) => b.likes - a.likes)
           .map((blog) => (
-            <div key={blog.id}>
-              <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
-            </div>
+            <Link className="blog" key={blog.id} to={`/blogs/${blog.id}`}>
+              <span className="blog-title">{blog.title}</span>
+              <span className="blog-by">by</span>
+              <span className="blog-author">{blog.author}</span>
+            </Link>
           ))}
       </div>
     </div>
   );
 
   return (
-    <div>
+    <main>
       <Notification />
 
-      {!user ? loginForm() :
+      {!user ? (
+        loginForm()
+      ) : (
         <Router>
           <div className="navigation">
-            <Link to="/">Home</Link>
-            <Link to="/users">Users</Link>
+            <div className="navigation-content">
+              <div className="section">
+                <Link className="nav-link" to="/">
+                  Home
+                </Link>
+                <Link className="nav-link" to="/users">
+                  Users
+                </Link>
+                <Link className="nav-link" to="/create">
+                  Create blog
+                </Link>
+              </div>
 
-            <div>
-              <span>{user.name}</span>
-              <form onSubmit={handleLogout}>
-                <button type="submit">logout</button>
-              </form>
+              <div className="section">
+                <span>{user.name}</span>
+                <form onSubmit={handleLogout}>
+                  <button type="submit">Logout</button>
+                </form>
+              </div>
             </div>
           </div>
 
-          
-
-          <h1>Blogs</h1>
-          <Routes>
-            <Route path="/" element={blogOverview()} />
-            <Route path="/users" element={<Users />} />
-            <Route path="/users/:id" element={<User />} />
-            <Route path="/blogs/:id" element={<Blog />} />
-          </Routes>
+          <div className="main-content">
+            <h1>Blogs</h1>
+            <Routes>
+              <Route path="/" element={blogOverview()} />
+              <Route path="/users" element={<Users />} />
+              <Route path="/create" element={<BlogForm />} />
+              <Route path="/users/:id" element={<User />} />
+              <Route path="/blogs/:id" element={<Blog />} />
+            </Routes>
+          </div>
         </Router>
-      }
-    </div>
+      )}
+    </main>
   );
 };
 

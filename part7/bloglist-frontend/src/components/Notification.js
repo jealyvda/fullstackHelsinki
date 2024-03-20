@@ -14,7 +14,7 @@ const Notification = () => {
   }
 
   // Update later such that classname can also be success
-  return <div className={notification.type}>{notification.message}</div>;
+  return <div className={`notification ${notification.type}`}>{notification.message}</div>;
 };
 
 export default Notification;
