@@ -1,0 +1,35 @@
+import express from 'express';
+import cors from 'cors';
+import patientService from './services/patientService';
+import diagnoseService from './services/diagnoseService';
+import toNewPatient from './utils';
+const app = express();
+app.use(express.json());
+app.use(cors());
+
+const PORT = 3001;
+
+app.get('/api/ping', (_req, res) => {
+    const newPatient = toNewPatient({ name: "Test", occupation: "asdfasdfasdf", ssn: "tess123", dateOfBirth: "testasdfasdf", gender: "female" });
+    const addedPatient = patientService.addPatient(newPatient);
+    console.log(addedPatient);
+    res.send('pong');
+});
+
+app.get('/api/diagnoses', (_req, res) => {
+    res.send(diagnoseService.getDiagnoses());
+});
+
+app.post('api/patients', (req, res) => {
+    const newPatient = toNewPatient(req.body);
+    const addedPatient = patientService.addPatient(newPatient);
+    res.send(addedPatient);
+});
+
+app.get('/api/patients', (_req, res) => {
+    res.send(patientService.getNonSensitivePatients());
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
