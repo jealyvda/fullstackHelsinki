@@ -30,6 +30,12 @@ app.get('/api/patients', (_req, res) => {
     res.send(patientService.getNonSensitivePatients());
 });
 
+app.get('/api/patients/:id', (req, res) => {
+    const id = req.params.id;
+    const patient = patientService.getPatientById(id);
+    res.json(patient);
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
