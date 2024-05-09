@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import {
@@ -11,8 +11,9 @@ import {
   ListItemIcon,
 } from '@mui/material';
 import { PersonOutline, MaleOutlined, FemaleOutlined, TransgenderOutlined, WorkOutline } from '@mui/icons-material';
-import { Gender, Patient } from '../../types';
+import { Gender, Patient, Entry } from '../../types';
 import { apiBaseUrl } from '../../constants';
+import EntryListItem from '../EntryListItem';
 
 
 const PatientDetails = () => {
@@ -58,6 +59,11 @@ const PatientDetails = () => {
             </ListItemIcon>
             <ListItemText primary={`Occupation: ${patient.occupation}`} />
           </ListItem>
+        </List>
+        <List>
+          {patient.entries.map((entry: Entry) => (
+            <EntryListItem key={entry.id} entry={entry} />
+          ))}
         </List>
       </Box>
     </div>

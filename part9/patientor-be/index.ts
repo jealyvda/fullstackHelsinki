@@ -10,9 +10,6 @@ app.use(cors());
 const PORT = 3001;
 
 app.get('/api/ping', (_req, res) => {
-    const newPatient = toNewPatient({ name: "Test", occupation: "asdfasdfasdf", ssn: "tess123", dateOfBirth: "testasdfasdf", gender: "female" });
-    const addedPatient = patientService.addPatient(newPatient);
-    console.log(addedPatient);
     res.send('pong');
 });
 

@@ -3,7 +3,7 @@ import { v1 as uuid } from 'uuid';
 
 import { Patient, NonSensitivePatient, NewPatient } from '../types';
 
-const patients: Patient[] = patientData as Patient[];
+const patients: Patient[] = patientData;
 
 const getPatients = (): Patient[] => {
     return patients;
@@ -21,7 +21,7 @@ const getPatientById = (id: string): Patient | undefined => {
 
 const addPatient = (newPatient: NewPatient): NonSensitivePatient => {
     const id = uuid();
-    patients.push({id, ...newPatient});
+    patients.push({id, ...newPatient, entries: []});
 
     return {
         id,
