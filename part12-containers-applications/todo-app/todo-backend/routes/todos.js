@@ -27,13 +27,6 @@ router.post('/', async (req, res) => {
   res.send(todo);
 });
 
-router.get('/statistics', async (req, res) => {
-    // Get the current value of the counter from Redis
-    const addedTodos = await redis.getAsync('added_todos');
-
-    res.json({ added_todos: addedTodos || 0 });
-})
-
 const singleRouter = express.Router();
 
 const findByIdMiddleware = async (req, res, next) => {
