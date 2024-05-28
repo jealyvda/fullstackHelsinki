@@ -9,6 +9,7 @@ const TodoView = () => {
 
   const refreshTodos = async () => {
     const { data } = await axios.get('/todos')
+    console.log(data)
     setTodos(data)
   }
 
