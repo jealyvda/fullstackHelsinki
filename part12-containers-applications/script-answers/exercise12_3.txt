@@ -1,0 +1,3 @@
+docker start nervous_wescoff
+nano /usr/src/app/index.js
+
