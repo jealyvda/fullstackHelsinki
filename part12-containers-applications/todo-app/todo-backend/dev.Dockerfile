@@ -9,4 +9,4 @@ ENV DEBUG=playground:*
   
 
 USER node
-CMD npm dev
+CMD npm run dev
