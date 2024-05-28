@@ -17,6 +17,9 @@ services:
     image: redis:latest
     ports:
       - "6379:6379"
+    command: ['redis-server', '--appendonly', 'yes'] # Overwrite the CMD
+    volumes: # Declare the volume
+      - ./redis_data:/data
 
 volumes:
   mongo_data:
