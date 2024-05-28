@@ -1,0 +1,28 @@
+version: '3'
+services:
+  frontend:
+    image: books-fe
+    container_name: books-fe-dev
+    build:
+      context: ./books-fe
+      dockerfile: dev.Dockerfile
+    volumes:
+      - ./books-fe/:/usr/src/app
+    ports:
+      - 3000:3000
+  
+  backend:
+    image: grapql-server
+    container_name: graphql-server-dev
+    build:
+      context: ./graphql-server
+      dockerfile: dev.Dockerfile
+    volumes:
+      - ./graphql-server/:/app
+    ports:
+      - 4000:4000
+    expose:
+      - 4000
+  
+  debug-helper:
+    image: busybox

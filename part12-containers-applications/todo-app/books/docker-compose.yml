@@ -1,0 +1,21 @@
+version: '3'
+services:
+  frontend:
+    image: books-fe
+    container_name: books-fe
+    build:
+      context: ./books-fe
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+  
+  backend:
+    image: grapql-server
+    container_name: graphql-server
+    build:
+      context: ./graphql-server
+      dockerfile: Dockerfile
+    ports:
+      - 4000:4000
+    expose:
+      - 4000
